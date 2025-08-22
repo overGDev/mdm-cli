@@ -4,8 +4,7 @@ package application
 
 import (
 	"fmt"
-	"mdm/constants"
-	"mdm/model"
+	"mdm/internal/model"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -16,15 +15,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const SECTIONS_FOLDER_NAME = "sections"
+
 // Checks if the sections folder exists on the current workDir.
 func SectionsFolderExists() bool {
-	_, err := os.Stat(constants.SECTIONS_FOLDER_NAME)
+	_, err := os.Stat(SECTIONS_FOLDER_NAME)
 	return err == nil
 }
 
 // Reads from the 'schema.yaml' file, converting the data into file and folder representing each document section.
 func LoadSchema() ([]model.Section, error) {
-	data, err := os.ReadFile(constants.SCHEMA_FILE_NAME)
+	data, err := os.ReadFile(SCHEMA_FILE_NAME)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +44,7 @@ func LoadSchema() ([]model.Section, error) {
 //
 // The recursive expansion is delegated to expandSectionsTree.
 func GenerateDocumentSections(sections []model.Section) error {
-	baseDir := constants.SECTIONS_FOLDER_NAME
+	baseDir := SECTIONS_FOLDER_NAME
 	if err := os.MkdirAll(baseDir, os.ModePerm); err != nil {
 		return err
 	}
