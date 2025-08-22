@@ -4,10 +4,10 @@ package cmd
 
 import (
 	"fmt"
+	"mdm/application"
 	"mdm/constants"
 	"mdm/errors"
 	"mdm/log"
-	"mdm/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -22,27 +22,32 @@ var initCmd = &cobra.Command{
 	Short: fmt.Sprintf("Generate the '%s' folder corresponding to the schema file", constants.SECTIONS_FOLDER_NAME),
 	Long:  fmt.Sprintf("Reads the contents of the '%s' file on the current path and generates the corresponding document structure.", constants.SCHEMA_FILE_NAME),
 	Run: func(cmd *cobra.Command, args []string) {
-		if validation.SectionsFolderExists() {
+		if application.SectionsFolderExists() {
 			log.FatalError(errors.ExistingFolderError(constants.SECTIONS_FOLDER_NAME))
 		}
 
 		generateSampleSchema, _ := cmd.Flags().GetBool(SAMPLE_SCHEMA_FLAG)
-		schemaFile := validation.SchemaFileExists()
+		schemaFile := application.SchemaFileExists()
 
 		if generateSampleSchema {
 			if schemaFile {
 				log.FatalError(errors.ExistingFileError(constants.SCHEMA_FILE_NAME))
 			}
 
-			err := validation.GenerateSampleSchema()
+			err := application.GenerateSampleSchema()
 			if err != nil {
 				log.FatalError(err)
 			}
 		}
 
-		// Generate the sections folder
-		if !schemaFile {
-			log.FatalError(errors.SchemaFileNotFound())
+		sections, err := application.LoadSchema()
+		if err != nil {
+			log.Warning(errors.SchemaFileNotFound())
+		}
+
+		err = application.GenerateDocumentSections(sections)
+		if err != nil {
+			log.FatalError(err)
 		}
 
 		log.Success(SUCCESS_MESSAGE)
