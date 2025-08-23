@@ -3,20 +3,11 @@
 package application
 
 import (
+	"mdm/internal/templates"
 	"os"
 )
 
 const SCHEMA_FILE_NAME = "schema.yaml"
-const SAMPLE_SCHEMA_CONTENT = `- title: Summary
-- title: Installation and usage
-  alias: installation
-- title: System Architecture
-  alias: Architecture
-- title: Components
-  children:
-    - title: Backend
-    - title: Frontend
-    - title: Database`
 
 // Checks if the schema file exists on the current workDir.
 func SchemaFileExists() bool {
@@ -27,5 +18,5 @@ func SchemaFileExists() bool {
 // Creates a schema file with default sample content.
 // The content is intended to showcase the customization the tool provides.
 func GenerateSampleSchema() error {
-	return os.WriteFile(SCHEMA_FILE_NAME, []byte(SAMPLE_SCHEMA_CONTENT), 0644)
+	return os.WriteFile(SCHEMA_FILE_NAME, []byte(templates.SampleSchema), 0644)
 }
