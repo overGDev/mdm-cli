@@ -12,6 +12,8 @@ const (
 	GITHUB_FOLDER_NAME         = ".github"
 	GITHUB_ACTIONS_FOLDER_NAME = "workflows"
 	GITHUB_ACTION_FILE_NAME    = "update_readme.yaml"
+
+	GIT_IGNORE_FILE_NAME = ".gitignore"
 )
 
 // Creates the GitHub Action file necesary to combine all of the document sections
@@ -26,4 +28,8 @@ func GenerateGitHubAction() error {
 
 	file := path.Join(folder, GITHUB_ACTION_FILE_NAME)
 	return os.WriteFile(file, []byte(templates.GitHubAction), 0644)
+}
+
+func GenerateGitIgnore() error {
+	return os.WriteFile(GIT_IGNORE_FILE_NAME, []byte(templates.GitIgnore), 0644)
 }

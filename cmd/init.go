@@ -54,6 +54,11 @@ var initCmd = &cobra.Command{
 			applog.FatalError(err)
 		}
 
+		err = application.GenerateGitIgnore()
+		if err != nil {
+			applog.FatalError(err)
+		}
+
 		err = application.GenerateScript()
 		if err != nil {
 			applog.FatalError(err)

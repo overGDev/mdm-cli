@@ -10,3 +10,6 @@ var GitHubAction string
 
 //go:embed script.py
 var Script string
+
+//go:embed ignore
+var GitIgnore string
