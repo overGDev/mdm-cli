@@ -49,6 +49,16 @@ var initCmd = &cobra.Command{
 			applog.FatalError(err)
 		}
 
+		err = application.GenerateGitHubAction()
+		if err != nil {
+			applog.FatalError(err)
+		}
+
+		err = application.GenerateScript()
+		if err != nil {
+			applog.FatalError(err)
+		}
+
 		applog.Success(SUCCESS_MESSAGE)
 	},
 }
