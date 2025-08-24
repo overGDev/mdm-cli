@@ -11,5 +11,8 @@ var GitHubAction string
 //go:embed script.py
 var Script string
 
+//go:embed requirements.txt
+var Requirements string
+
 //go:embed ignore
 var GitIgnore string

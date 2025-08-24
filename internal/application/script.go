@@ -11,6 +11,8 @@ import (
 const (
 	SCRIPT_FOLDER_NAME = "scripts"
 	SCRIPT_FILE_NAME   = "combine_sections.py"
+
+	REQUIREMENTS_FILE_NAME = "requirements.txt"
 )
 
 // Creates a schema file with default sample content.
@@ -21,6 +23,12 @@ func GenerateScript() error {
 		return err
 	}
 
-	file := path.Join(SCRIPT_FOLDER_NAME, SCRIPT_FILE_NAME)
+	file := path.Join(SCRIPT_FOLDER_NAME, REQUIREMENTS_FILE_NAME)
+	err = os.WriteFile(file, []byte(templates.Requirements), 0644)
+	if err != nil {
+		return err
+	}
+
+	file = path.Join(SCRIPT_FOLDER_NAME, SCRIPT_FILE_NAME)
 	return os.WriteFile(file, []byte(templates.Script), 0644)
 }
