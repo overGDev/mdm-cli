@@ -87,6 +87,12 @@ func expandSectionsTree(section model.Section, parentPath string, headerLevel in
 	// Create only leaf sections
 	filePath := filepath.Join(parentPath, name+".md")
 
+	// In case the file already exists
+	// Specific for update command
+	if _, err := os.Stat(filePath); err == nil {
+		return nil
+	}
+
 	// Simple content to start the file
 	// The header level matches the level of depth of the section within the section tree
 	content := fmt.Sprintf("%s %s\n\n", strings.Repeat("#", headerLevel), section.Title)
