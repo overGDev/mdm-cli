@@ -82,8 +82,8 @@ Whenever the **schema.yaml** file changes, you can generate missing files or fol
 ```bash
 # Adds and deletes sections accordingly
 mdm update schema
-# Prevents deleting files and directories
-mdm update schema --no-delete
+# Deletes files non present on 'schema.yaml'
+mdm update schema --delete-non-present
 ```
 
 ## Coming soon
