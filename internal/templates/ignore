@@ -1,0 +1,4 @@
+# Prevents direct changes to combined file
+README.md
+# Just in case
+*.pdf

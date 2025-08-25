@@ -1,0 +1,10 @@
+- title: Summary
+- title: Installation and usage
+  alias: installation
+- title: System Architecture
+  alias: Architecture
+- title: Components
+  children:
+    - title: Backend
+    - title: Frontend
+    - title: Database
