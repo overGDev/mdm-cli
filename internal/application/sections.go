@@ -4,6 +4,7 @@ package application
 
 import (
 	"fmt"
+	"io/fs"
 	"mdm/internal/model"
 	"os"
 	"path/filepath"
@@ -16,6 +17,8 @@ import (
 )
 
 const SECTIONS_FOLDER_NAME = "sections"
+
+var consideredSections = []string{}
 
 // Checks if the sections folder exists on the current workDir.
 func SectionsFolderExists() bool {
@@ -86,6 +89,7 @@ func expandSectionsTree(section model.Section, parentPath string, headerLevel in
 
 	// Create only leaf sections
 	filePath := filepath.Join(parentPath, name+".md")
+	consideredSections = append(consideredSections, filePath)
 
 	// In case the file already exists
 	// Specific for update command
@@ -128,4 +132,71 @@ func sanitizeString(path string) string {
 	t = strings.ReplaceAll(t, "_.md", ".md")
 
 	return filepath.Clean(t)
+}
+
+func deleteNonPresentSections() error {
+	toBeKept := make(map[string]struct{}, len(consideredSections))
+	for _, s := range consideredSections {
+		toBeKept[s] = struct{}{}
+	}
+
+	err := filepath.WalkDir(SECTIONS_FOLDER_NAME, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		if _, ok := toBeKept[path]; !ok {
+			if rmErr := os.Remove(path); rmErr != nil {
+				return rmErr
+			}
+		}
+		return nil
+	})
+	return err
+}
+
+func deleteEmptyDirectories() error {
+	return filepath.WalkDir(SECTIONS_FOLDER_NAME, func(path string, d os.DirEntry, err error) error {
+
+		fmt.Println(path)
+
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() {
+			return nil
+		}
+
+		entries, readErr := os.ReadDir(path)
+		if readErr != nil {
+			return readErr
+		}
+
+		if len(entries) == 0 {
+			fmt.Println("deleting on second call:", path)
+			if rmErr := os.Remove(path); rmErr != nil {
+				return rmErr
+			}
+			return fs.SkipDir // prevents trying to walk on chidren files of removed dir
+		}
+
+		return nil
+	})
+}
+
+// Internally calls the deleteNonPresentSections and deleteEmptyDirectories functions.
+// Ensures that the updated sections folder remains clean.
+func CleanDir() error {
+
+	err := deleteNonPresentSections()
+	if err != nil {
+		return err
+	}
+
+	return deleteEmptyDirectories()
 }

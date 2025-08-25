@@ -8,28 +8,21 @@ import (
 	"mdm/internal/apperrors"
 	"mdm/internal/application"
 	"mdm/internal/applog"
+	"slices"
 
 	"github.com/spf13/cobra"
 )
 
 var validArgs = []string{"sections"}
 
-func contains(arr []string, str string) bool {
-	for _, v := range arr {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update repository content",
+	Args:  cobra.ExactArgs(1),
 	Long:  `Update your repository folders and files according to changes on the configuration files`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if !contains(validArgs, args[0]) {
+		if !slices.Contains(validArgs, args[0]) {
 			applog.Warning(apperrors.InvalidArgument("update"))
 		}
 
@@ -47,6 +40,15 @@ var updateCmd = &cobra.Command{
 			applog.FatalError(err)
 		}
 
+		deleteNonPresent, _ := cmd.Flags().GetBool("delete-non-present")
+
+		if deleteNonPresent {
+			err := application.CleanDir()
+			if err != nil {
+				applog.FatalError(err)
+			}
+		}
+
 		applog.Success(fmt.Sprintf("successfully updated %s", application.SECTIONS_FOLDER_NAME))
 
 	},
@@ -54,4 +56,5 @@ var updateCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
+	updateCmd.Flags().BoolP("delete-non-present", "d", false, fmt.Sprintf("deletes all the sections not present on %s", application.SCHEMA_FILE_NAME))
 }
