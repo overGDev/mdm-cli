@@ -12,7 +12,6 @@ import (
 )
 
 const (
-	SUCCESS_MESSAGE    = "Successfully generated sections"
 	SAMPLE_SCHEMA_FLAG = "sample"
 )
 
@@ -64,7 +63,7 @@ var initCmd = &cobra.Command{
 			applog.FatalError(err)
 		}
 
-		applog.Success(SUCCESS_MESSAGE)
+		applog.Success("Successfully generated sections")
 	},
 }
 
