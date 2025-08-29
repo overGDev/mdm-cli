@@ -1,3 +1,4 @@
 sections
 /schema.yaml
 *.exe
+dist
